@@ -45,6 +45,7 @@ def block_to_html_node(block):
         return unordered_list_to_html_node(block)
     if block_type == block_type_ordered_list:
         return ordered_list_to_html_node(block)
+    raise ValueError("Invalid block type")
 
 
 
@@ -93,7 +94,7 @@ def block_to_block_type(block):
                 return block_type_unordered_list
         if filtred_lines[0].startswith('1.'):
             for i in range(len(filtred_lines)):
-                if line[i].startswith(f'{i}.'):
+                if filtred_lines[i].startswith(f'{i+1}.'):
                     pass
                 else:
                     other_lines_sign_check = False
@@ -186,23 +187,24 @@ def unordered_list_to_html_node(block):
     html_items = []
     for line in lines:
         line = line.strip()
-        if not line.startswith('*'):
+        if line.startswith('*') or line.startswith('-'):
+            text = line[2:]
+            children = text_to_children(text)
+            html_items.append(ParentNode("li", children))
+        else:
             raise ValueError("Invalid list block")
-        text = line[2:]
-        print(text)
-        children = text_to_children(text)
-        html_items.append(ParentNode("li", children))
     return ParentNode("ul", html_items)
 
 def ordered_list_to_html_node(block):
     lines = block.split('\n')
     html_items = []
-    for line in lines:
-        line = line.strip()
-        if not line.startswith('*'):
+    for i in range(len(lines)):
+        lines[i] = lines[i].strip()
+        if not lines[i].startswith(f'{i+1}.'):
             raise ValueError("Invalid list block")
-        text = line[2:]
-        print(text)
+        text = lines[i][3:]
         children = text_to_children(text)
         html_items.append(ParentNode("li", children))
+    
+    
     return ParentNode("ol", html_items)
