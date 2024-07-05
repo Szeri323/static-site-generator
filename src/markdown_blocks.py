@@ -9,19 +9,22 @@ block_type_quote = "quote"
 block_type_unordered_list = "unordered_list"
 block_type_ordered_list = "ordered_list"
 
-tags = {
-    "paragraph": "p",
-    "heading": "h",
-    "code": "code",
-    "quote": "blockquote",
-    "unordered_list": "ul",    
-    "ordered_list": "ol"  
-}
-childs = {
-    "code": "pre",
-    "unordered_list": "li",    
-    "ordered_list": "li"   
-}
+def extract_title(markdown):
+    blocks = markdown_to_blocks(markdown)
+    try:
+        for block in blocks:
+            if block.startswith('#'):
+                counter = 0
+                for char in block:
+                    if char == "#":
+                        counter += 1
+                if counter == 1:        
+                    return block.lstrip('# ')
+                else:
+                    raise Exception("Markdown does not contain h1")
+    except Exception as e:
+        print(e)
+        
 
 def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)
@@ -146,29 +149,12 @@ def heading_to_html_node(block):
     return ParentNode(f'h{level}', children)
 
 def code_to_html_node(block):
-    # if not block.startswith("```") or not block.endswith("```"):
-    #     raise ValueError("Invalid code block")
-    # text = block[3:-3]
-    # children = text_to_children(text)
-    # code = ParentNode("code", children)
-    # return ParentNode("pre", [code])
-    
-    children = []
-    node_children = []
-    lines = block.split('\n')
-    lines = lines[1:-1]
-    if len(lines) > 1:
-        for line in lines:
-            line = line.strip()
-            child = text_to_children(line)
-            node_children.append(ParentNode("pre", child))
-    else:    
-        text = block[3:-3]
-        child = text_to_children(text)
-        children.append(ParentNode("pre", child))
-    if len(node_children) > 0:
-        children.append(node_children)
-    return ParentNode("code", children)
+    if not block.startswith("```") or not block.endswith("```"):
+        raise ValueError("Invalid code block")
+    text = block[4:-3]
+    children = text_to_children(text)
+    code = ParentNode("code", children)
+    return ParentNode("pre", [code])
 
 def quote_to_html_node(block):
     lines = block.split('\n')
