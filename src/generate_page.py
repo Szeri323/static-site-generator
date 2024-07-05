@@ -1,35 +1,37 @@
+import os
+
 from markdown_blocks import (
     markdown_to_html_node,
-    extract_title
 )
-from copy_from_to import copy_from_to
 
-def generate_page(from_path, template_path, dest_path):
-    print(f'Generating page from {from_path} to {dest_path} using {template_path}')
+def extract_title(markdown):
+    lines = markdown.split("\n")
+    for line in lines:
+        if line.startswith("# "):
+            return line[2:]
+    raise ValueError("No title found")
+
+def generate_page_recursive(content_path, static_path, template_path, dest_path): 
     markdown = ""
     template = ""
-    with open(from_path+"/"+'index.md') as f:
-        markdown = f.read()
-        f.close()
     with open(template_path) as t:
         template = t.read()
         t.close()
+    for file_md in os.listdir(content_path):
+        if os.path.isfile(content_path + '/' + file_md):
+            with open(content_path+"/"+'index.md') as f:
+                markdown = f.read()
+                f.close()
+
+            node = markdown_to_html_node(markdown)
+            html = node.to_html()
+            
+            title = extract_title(markdown)
+            template = template.replace("{{ Title }}", title).replace("{{ Content }}", html)
         
-    node = markdown_to_html_node(markdown)
-    html = node.to_html()
-    title = extract_title(markdown)
-    template = template.replace("{{ Title }}", title).replace("{{ Content }}", html)
-    copy_from_to(from_path, dest_path)
-    with open(dest_path + '/' + 'index.html', 'w+') as f:
-        print(template, file=f)
-        f.close()
-        
-        
-def main():
-    from_path = '/home/szeri/git/boot.dev/static-site-generator/content'
-    template_path = '/home/szeri/git/boot.dev/static-site-generator/html_templates/template.html'
-    dest_path = '/home/szeri/git/boot.dev/static-site-generator/public'
-    generate_page(from_path, template_path, dest_path)
-    
-if __name__ == "__main__":
-    main()
+            with open(dest_path + '/' + 'index.html', 'w+') as f:
+                print(template, file=f)
+                f.close()
+        else:
+            os.mkdir(dest_path + '/' + file_md)
+            generate_page_recursive(content_path + '/' + file_md, static_path, template_path, dest_path + '/' + file_md)

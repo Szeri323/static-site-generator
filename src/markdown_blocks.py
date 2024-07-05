@@ -8,22 +8,6 @@ block_type_code = "code"
 block_type_quote = "quote"
 block_type_unordered_list = "unordered_list"
 block_type_ordered_list = "ordered_list"
-
-def extract_title(markdown):
-    blocks = markdown_to_blocks(markdown)
-    try:
-        for block in blocks:
-            if block.startswith('#'):
-                counter = 0
-                for char in block:
-                    if char == "#":
-                        counter += 1
-                if counter == 1:        
-                    return block.lstrip('# ')
-                else:
-                    raise Exception("Markdown does not contain h1")
-    except Exception as e:
-        print(e)
         
 
 def markdown_to_html_node(markdown):
