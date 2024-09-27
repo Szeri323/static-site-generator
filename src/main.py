@@ -7,9 +7,6 @@ def main():
     path_sign = '/'
     if platform == "win32":
         path_sign = '\\'
-
-    print(platform)
-    print(os.getcwd().replace(path_sign+'src', path_sign+'content'))
     content_path = os.getcwd().replace(path_sign+'src', path_sign+'content')
     static_path = os.getcwd().replace(path_sign+'src', path_sign+'static')
     template_path = os.getcwd().replace(path_sign+'src', path_sign+'html_templates' + path_sign + 'template.html')
