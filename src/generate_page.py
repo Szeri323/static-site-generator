@@ -33,10 +33,17 @@ def generate_page_recursive(ansolute_content_path, content_path, static_path, te
             depth_of_file = content_path.replace(ansolute_content_path, '')
 
             counter = depth_of_file.split('/')
+            
+            static_files_list = os.listdir(static_path)
+            style_file_name = ""
+            for file_name in static_files_list:
+                if os.path.isfile(static_path + '/' + file_name) and '.css' in file_name:
+                    style_file_name = file_name
+            
             if len(counter) == 1:
-                template = template.replace("{{ Style }}", './index.css')
+                template = template.replace("{{ Style }}", f'./{style_file_name}')
             else :
-                template = template.replace("{{ Style }}", '../' * (len(counter) - 1) + 'index.css')
+                template = template.replace("{{ Style }}", '../' * (len(counter) - 1) + style_file_name)
 
             template = template.replace("{{ Title }}", title).replace("{{ Content }}", html)
 
