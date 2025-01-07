@@ -12,3 +12,4 @@ def generate_navigation(content_path, file_tree, counter, template):
         template = template.replace("{{ Navigation }}", '../' * (len(counter) - 1) + '')
     print(template)
     print("End")
+    return template

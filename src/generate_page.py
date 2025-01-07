@@ -42,8 +42,8 @@ def generate_page_recursive(ansolute_content_path, content_path, static_path, te
                 template = template.replace("{{ Style }}", '../' * (len(counter) - 1) + 'index.css')
 
             template = template.replace("{{ Title }}", title).replace("{{ Content }}", html)
-            generate_navigation(content_path, file_tree, counter, template)
-            # template = template.replace("{{ Navigation }}", )
+            
+            template = generate_navigation(content_path, file_tree, counter, template)
 
             file_html = file_md.replace('.md','.html')
 
