@@ -1,7 +1,7 @@
 import os
 
 
-def generate_navigation(content_path, file_tree, counter, template):
+def generate_navigation(counter, template):
     if len(counter) == 1:
         template = template.replace("{{ Navigation }}", './')
     else :
