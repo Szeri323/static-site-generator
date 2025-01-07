@@ -4,6 +4,8 @@ from markdown_blocks import (
     markdown_to_html_node,
 )
 
+from generate_navigation import generate_navigation
+
 def extract_title(markdown):
     lines = markdown.split("\n")
     for line in lines:
@@ -14,6 +16,8 @@ def extract_title(markdown):
 def generate_page_recursive(ansolute_content_path, content_path, static_path, template_path, dest_path): 
     markdown = ""
     template = ""
+    navigation = ""
+    file_tree = os.listdir(content_path)
     for file_md in os.listdir(content_path):
 
         with open(template_path) as t:
@@ -24,7 +28,6 @@ def generate_page_recursive(ansolute_content_path, content_path, static_path, te
             with open(content_path+"/"+file_md) as f:
                 markdown = f.read()
                 f.close()
-
             node = markdown_to_html_node(markdown)
             html = node.to_html()
             
@@ -39,7 +42,8 @@ def generate_page_recursive(ansolute_content_path, content_path, static_path, te
                 template = template.replace("{{ Style }}", '../' * (len(counter) - 1) + 'index.css')
 
             template = template.replace("{{ Title }}", title).replace("{{ Content }}", html)
-
+            generate_navigation(content_path, file_tree, counter, template)
+            # template = template.replace("{{ Navigation }}", )
 
             file_html = file_md.replace('.md','.html')
 
