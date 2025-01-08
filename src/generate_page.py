@@ -23,7 +23,7 @@ def generate_page_recursive(ansolute_content_path, content_path, static_path, te
             t.close()
 
         if os.path.isfile(content_path + '/' + file_md):
-            with open(content_path+"/"+file_md) as f:
+            with open(content_path+"/"+file_md, encoding="utf-8") as f:
                 markdown = f.read()
                 f.close()
             node = markdown_to_html_node(markdown)
@@ -52,7 +52,7 @@ def generate_page_recursive(ansolute_content_path, content_path, static_path, te
 
             file_html = file_md.replace('.md','.html')
 
-            with open(dest_path + '/' + file_html, 'w+') as f:
+            with open(dest_path + '/' + file_html, 'w+', encoding="utf-8") as f:
                 print(template, file=f)
                 f.close()
         else:
